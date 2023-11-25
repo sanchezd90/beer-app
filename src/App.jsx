@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import html2canvas from 'html2canvas';
+import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -38,8 +39,18 @@ const App = () => {
 
   const generateCode = () => {
     if (validateForm()) {
-      const newCode = generateUniqueCode();
-      setGeneratedCode(newCode);
+      const storedCode = localStorage.getItem('generatedCode');
+
+      if (storedCode) {
+        // Use the stored code if available
+        setGeneratedCode(storedCode);
+      } else {
+        // Generate a new code if not available
+        const newCode = generateUniqueCode();
+        setGeneratedCode(newCode);
+        localStorage.setItem('generatedCode', newCode);
+      }
+
       saveDataToLocalhost();
       setFormSubmitted(true);
     }
@@ -51,7 +62,7 @@ const App = () => {
   };
 
   const generateUniqueCode = () => {
-    return 'ABC123'; // Replace with actual code generation logic
+    return uuidv4();
   };
 
   const downloadCodeAsJPG = () => {
@@ -80,15 +91,16 @@ const App = () => {
 
       if (lastSubmissionTime > twentyFourHoursAgo) {
         // Show last generated code
-        setGeneratedCode(generateUniqueCode());
+        setGeneratedCode(localStorage.getItem('generatedCode'));
         setFormSubmitted(true);
       } else {
         // Clear local storage
         localStorage.removeItem('userData');
         localStorage.removeItem('formSubmissionTime');
+        localStorage.removeItem('generatedCode'); // Clear generated code when refreshing
       }
     }
-  }, []); // Empty dependency array ensures this effect runs only once when the component mounts
+  }, []); 
 
   return (
     <div className="App">
@@ -134,7 +146,7 @@ const App = () => {
         </form>
       ) : (
         <div id="generated-code-div">
-          <h2 >Generated Code</h2>
+          <h2>Generated Code</h2>
           <p>{generatedCode}</p>
           <button type="button" onClick={downloadCodeAsJPG}>
             Download Code as JPG
