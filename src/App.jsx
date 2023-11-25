@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import html2canvas from 'html2canvas';
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -54,12 +55,18 @@ const App = () => {
   };
 
   const downloadCodeAsJPG = () => {
-    const textToSave = generatedCode;
-    const blob = new Blob([textToSave], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'generated_code.jpg';
-    link.click();
+    const generatedCodeDiv = document.getElementById('generated-code-div');
+  
+    html2canvas(generatedCodeDiv).then((canvas) => {
+      // Convert canvas to JPEG image
+      const imageData = canvas.toDataURL('image/jpeg');
+  
+      // Create a link and trigger the download
+      const link = document.createElement('a');
+      link.href = imageData;
+      link.download = 'generated_code.jpg';
+      link.click();
+    });
   };
 
   useEffect(() => {
@@ -126,8 +133,8 @@ const App = () => {
           </button>
         </form>
       ) : (
-        <div>
-          <h2>Generated Code</h2>
+        <div id="generated-code-div">
+          <h2 >Generated Code</h2>
           <p>{generatedCode}</p>
           <button type="button" onClick={downloadCodeAsJPG}>
             Download Code as JPG
