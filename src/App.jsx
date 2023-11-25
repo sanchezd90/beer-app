@@ -70,20 +70,29 @@ const App = () => {
     return uuidv4();
   };
 
-  const downloadCodeAsJPG = () => {
-    const generatedCodeDiv = document.getElementById("generated-code-div");
+  const downloadCodeAsJPG = async () => {
+  const generatedCodeDiv = document.getElementById("generated-code-div");
 
-    html2canvas(generatedCodeDiv).then((canvas) => {
-      // Convert canvas to JPEG image
-      const imageData = canvas.toDataURL("image/jpeg");
+  // Set background color to ensure proper rendering
+  generatedCodeDiv.style.backgroundColor = '#fff'; // Set to your desired background color
 
-      // Create a link and trigger the download
-      const link = document.createElement("a");
-      link.href = imageData;
-      link.download = "generated_code.jpg";
-      link.click();
-    });
-  };
+  // Wait for a short delay to ensure elements are fully rendered
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  html2canvas(generatedCodeDiv).then((canvas) => {
+    // Reset background color to its original state
+    generatedCodeDiv.style.backgroundColor = '';
+
+    // Convert canvas to JPEG image
+    const imageData = canvas.toDataURL("image/jpeg");
+
+    // Create a link and trigger the download
+    const link = document.createElement("a");
+    link.href = imageData;
+    link.download = "generated_code.jpg";
+    link.click();
+  });
+};
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData");
