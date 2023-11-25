@@ -225,7 +225,7 @@ const App = () => {
                   {localStorage.getItem("userData") &&
                     JSON.parse(localStorage.getItem("userData")).instagram}
                 </p>
-                <h2 style={{ color: "#FF6F61" }}>Generated Code</h2>
+                <h2 style={{ color: "#FF6F61" }}>Your Coupon Code</h2>
                 <p>{generatedCode}</p>
               </div>
               <Button
